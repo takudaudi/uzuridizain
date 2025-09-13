@@ -17,13 +17,18 @@ export const useSignUp = () => {
       const response = await client.api.users.$post({ json });
 
       if (!response.ok) {
-        throw new Error("Something went wrong");
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || "Something went wrong";
+        throw new Error(errorMessage);
       }
 
       return await response.json();
     },
     onSuccess: () => {
-      toast.success("User created");
+      toast.success("User created successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create user");
     }
   });
 
